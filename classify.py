@@ -39,7 +39,7 @@ def trainPerceptron(train_set, train_labels, learning_rate, max_iter):
     rows, cols = (len(train_set), 32 * 32 * 3)
     oldW = [[0 for i in range(cols)] for j in range(rows)]
     b = 0 #TODO: is this multiple values??? + how do I do
-    for k in range(max_iter):
+    for k in range(1):
         for i in range(len(train_set)):
             for j in range(len(train_set[i])):
                 #oldW[i][j], train_set[i][j]

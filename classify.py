@@ -37,18 +37,19 @@ def trainPerceptron(train_set, train_labels, learning_rate, max_iter):
     # TODO: Write your code here
     # return the trained weight and bias parameters
     rows, cols = (len(train_set), 32 * 32 * 3)
-    oldW = [[0 for i in range(cols)] for j in range(rows)]
+    #oldW = [[0 for i in range(cols)] for j in range(rows)]
+    oldW = [0] * 32 * 32 * 3
     b = 0 #TODO: is this multiple values??? + how do I do
-    for k in range(1):
+    for k in range(max_iter):
         for i in range(len(train_set)):
             for j in range(len(train_set[i])):
                 #oldW[i][j], train_set[i][j]
                 x = train_set[i][j]
-                wi = oldW[i][j]
+                wi = oldW[j]
                 y_correct = train_labels[i]
                 y_pred = x * wi
                 if y_pred != y_correct:
-                    oldW[i][j] = wi + learning_rate * (y_correct - y_pred) * x
+                    oldW[j] = wi + learning_rate * (y_correct - y_pred) * x
     return oldW, b
 
 def classifyPerceptron(train_set, train_labels, dev_set, learning_rate, max_iter):
@@ -61,7 +62,7 @@ def classifyPerceptron(train_set, train_labels, dev_set, learning_rate, max_iter
     for i in range(len(dev_set)):
         sum = 0
         for j in range(len(dev_set[i])):
-            sum += W[i][j] * dev_set[i][j]
+            sum += W[j] * dev_set[i][j]
         sum += b
         guesses.append(np.sign(sum))
     return guesses

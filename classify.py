@@ -34,96 +34,60 @@ return - a list containing predicted labels for dev_set
 import numpy as np
 
 def trainPerceptron(train_set, train_labels, learning_rate, max_iter):
-    W = np.array([0.0] * 32 * 32 * 3)
-    #W = [0] * 32 * 32 * 3
+    W = np.array([0.0] * len(train_set[0]))
     b = 0
     for ja in range(max_iter):
         for i in range(len(train_set)):
-            dot = np.sign(np.dot(W, train_set[i]))
+            dot = np.sign(np.dot(W, train_set[i]) + b)
             s = 1
-            if train_labels[i] is np.bool_(False):
+            if train_labels[i] == 0:
                 s = -1
             if dot != s:
-                k = learning_rate * s
-                dodo = np.dot(k, train_set[i])
-                W += dodo
-                b += learning_rate
-                #print(b)
-
-
-
+                W += s * learning_rate * train_set[i]
+                b += s * learning_rate
     return W, b
 
-
-    '''
-    oldW = np.array([0] * 32 * 32 * 3)
-    #oldW = [0] * 32 * 32 * 3
-    b = 0 #b = w0 * x0, x0 = 1
-    for i in range(len(train_set)):
-        for j in range(len(train_set[i])):
-            #oldW[i][j], train_set[i][j]
-            x = train_set[i][j]
-            wi = oldW[j]
-            y_correct = train_labels[i]
-            y_pred = x * wi
-            if y_pred != y_correct:
-                oldW[j] = wi + learning_rate * (y_correct - y_pred) * x
-                b -= learning_rate
-            else:
-                b += learning_rate
-    return oldW, b
-    '''
 
 def classifyPerceptron(train_set, train_labels, dev_set, learning_rate, max_iter):
     # TODO: Write your code here
     # Train perceptron model and return predicted labels of development set
     W, b = trainPerceptron(train_set, train_labels, learning_rate, max_iter)
     guesses = []
-    #dot product W .
     for i in range(len(dev_set)):
         sum = np.dot(W, dev_set[i])
         sum += b
-        guesses.append(np.sign(sum))
+        a = np.sign(sum)
+        if a == -1:
+            guesses.append(0)
+        else:
+            guesses.append(1)
     return guesses
 
 
 
 
-def correctLabel(L):
+def correctLabel(L, k):
     negs = 0
     pos = 0
-    for x in L:
-        if x[1] == 1:
+    for i in range(min(k, len(L))):
+        if L[i][1] == 1:
             pos += 1
         else:
             negs += 1
     if pos > negs:
         return 1
     else:
-        return -1
+        return 0
 
 def classifyKNN(train_set, train_labels, dev_set, k):
     # TODO: Write your code here
-    return []
-    '''
     out = []
-    for i in range(len(dev_set)):
-        nearest = [] #nearest pairs (distance, trained value)
+    for devPic in dev_set:
+        nearest = []  # nearest pairs (distance, trained value)
         for j in range(len(train_set)):
-            curr_dist = np.linalg.norm(dev_set[i], zip(train_set[j])[0])
-            '''
-            for m in range(32 * 32 * 3):
-                curr_dist += np.abs(dev_set[i][m] - train_set[j][m])
-            '''
-
-            if j < k:
-                nearest.append((curr_dist, train_labels[j]))
-                nearest.sort()
-            elif curr_dist < nearest[-1][0]:
-                nearest.pop(-1)
-                nearest.append((curr_dist, train_labels[j]))
-                nearest.sort()
-        out.append(correctLabel(nearest))
-
+            curr_dist = np.linalg.norm(devPic - train_set[j])
+            nearest.append((curr_dist, train_labels[j]))
+        nearest.sort()
+        out.append(correctLabel(nearest, k))
     return out
-    '''
+
